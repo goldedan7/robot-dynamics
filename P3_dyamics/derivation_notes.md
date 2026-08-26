@@ -178,7 +178,7 @@ friction = b·[ω₁, ω₂]
 Settling timescale scales as inertia/damping. With m₁₁ ≈ 3.6 and
 b = 0.5 this is ≈ 7 s, so a 10 s window spans under two time constants —
 amplitude visibly decays but no settled pose. Either extend the window
-(≈25 s) or raise b to 1.2–2.0; the latter was used to obtain a clear
+(≈20 s) or raise b to 1.2–2.0; the latter was used to obtain a clear
 final configuration.
 
 Settles at θ₁ ≈ −90°, θ₂ ≈ 0° — hanging vertically downward, the stable
@@ -196,7 +196,7 @@ solve_ivp(
     t_eval=t_eval_d,
     method='RK45',
     args=(torque, damping),  # order must match signature
-    rtol=1e-10, atol=1e-12,  # see §6
+    rtol=1e-10, atol=1e-12,  # see ## 6
 )
 ```
 
