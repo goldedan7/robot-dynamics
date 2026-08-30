@@ -184,6 +184,15 @@ final configuration.
 Settles at θ₁ ≈ −90°, θ₂ ≈ 0° — hanging vertically downward, the stable
 equilibrium, antipodal to §4's unstable one.
 
+## 7a. Undamped animation — wide swing is correct, not a bug
+
+With more snapshots (~100), the undamped (damping=0) animation shows
+theta1 swinging across a wide range (~+6° to ~−185°) rather than
+settling. This is expected: with no damping, energy has nowhere to go,
+so the arm never stops — it keeps swinging indefinitely. Fewer
+snapshots (8) can misleadingly look like it settles, simply because it
+happened to be caught mid-swing near vertical at t=5s.
+
 ---
 
 ## 8. Solver invocation
