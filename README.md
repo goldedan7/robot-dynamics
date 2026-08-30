@@ -18,8 +18,8 @@ The point isn't to collect topics. It's to end up able to derive a Lagrangian *a
 |---|---------|------------------------|--------|
 | P1 | Pendulum | The core idea behind all dynamics: state + time | ✅ Done |
 | P2 | 2-DOF arm — kinematics | Geometry: where is the hand? | ✅ Done |
-| P3 | 2-DOF arm — dynamics | Physics: torque, gravity, Lagrangian | 🔄 In progress |
-| P4 | Model-based control | PID vs LQR vs computed-torque | Planned |
+| P3 | 2-DOF arm — dynamics | Physics: torque, gravity, Lagrangian | ✅ Done |
+| P4 | Model-based control | PID vs LQR vs computed-torque | 🔄 In progress |
 | P5 | Learning-based control ⭐ | The same problem, solved with RL — and compared | Planned |
 
 **Beyond** (realistically post-discharge, mid-2027): manipulation in simulation, then a flagship project on design–control co-optimisation. Sketched at the end — deliberately, since I haven't earned the right to specify them yet.
@@ -54,17 +54,40 @@ The detail I found most instructive was the failure case. When the target is out
 
 ---
 
-## P3 — Arm dynamics *(in progress)*
+## P3 — 2-DOF robot arm dynamics
 
-Kinematics told me where the arm is. Dynamics tells me how it moves when torque and gravity act on it.
+**The question:** if a robot arm is just two connected pendulums, how
+does it actually move when gravity (and eventually a motor) acts on it?
 
-I'm deriving the equations of motion via **Lagrangian mechanics** (kinetic minus potential energy) rather than chasing forces directly, because it scales far better to multi-joint systems. The deliverable is a simulator that takes joint torques and produces the arm actually swinging — the same thing P1 did for the pendulum, one dimension up.
+I derived the equations of motion `M(θ)θ̈ + C(θ,θ̇)θ̇ + G(θ) = τ` using
+Lagrangian mechanics rather than Newton's laws — with two links, tracking
+inter-link reaction forces by hand is exactly where sign errors creep in.
+Lagrangian only needs two scalars (kinetic and potential energy) and the
+force equations fall out automatically.
 
-**How I'll know it's right:** with damping switched off, total energy must stay constant over a long simulation. A derivation error almost always shows up as energy quietly leaking, so this is the test that matters more than any plot looking plausible.
+**The real test, and where I got stuck:** trajectory plots for a
+nonlinear, coupled system like this look plausible whether or not the
+underlying algebra is right — you can't eyeball a sign error out of a
+chaotic-looking swing. So the actual validation was energy conservation:
+with zero torque and zero damping, total energy has to stay exactly
+constant. My first attempt showed energy climbing steadily instead of
+holding flat. Rather than assuming the derivation was wrong, I isolated
+the cause to the ODE solver's default tolerance — tightening it
+(`rtol=1e-10, atol=1e-12`) dropped the drift from ~0.13 J to ~1e-9 J
+(floating-point noise). The physics was right the whole time; the solver
+settings weren't.
 
-This is the model every controller in P4 needs something to control.
+One more thing that initially looked like a bug and wasn't: starting the
+arm pointing straight up produced a simulation that never moved at all.
+That's correct — straight up is an unstable equilibrium where gravity's
+torque is exactly zero (it pulls along the link, not around it), so
+nothing sets the arm in motion without a nudge.
 
-## P4 — Model-based control *(planned)*
+📁 [`P3_dynamics/`](P3_dynamics/) — mass/Coriolis/gravity derivation,
+simulation (undamped + damped), and the full derivation writeup in
+[`derivation_notes.md`](P3_dynamics/derivation_notes.md)
+
+## P4 — Model-based control *(in progress)*
 
 Three controllers on the same system, compared honestly: **PID** as the model-free baseline, **LQR** derived from the linearised dynamics, and **computed-torque** using the P3 model directly to cancel the nonlinearities.
 
