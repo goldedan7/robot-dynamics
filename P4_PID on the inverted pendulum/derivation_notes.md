@@ -1,4 +1,4 @@
-# P4
+# P4 - PID on the inverted pendulum
 
 ## Setup
 Pendulum held at the upright position (θ = 180°), starting from 170°, with a
@@ -8,7 +8,7 @@ constant disturbance torque d = 2.0. Controller:
 
 The integral is carried as a third state, d(error_integral)/dt = error.
 
-## What each term did (observed in simulation)
+## What each term did in simulation
 - **P only:** no energy is removed, so the pendulum oscillates at about 20°
   forever.
 - **+D:** damping. Less overshoot, but too much D slows the settling.
