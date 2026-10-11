@@ -1,5 +1,5 @@
-markdown
-# P3 — 2-DOF Arm Dynamics: Derivation
+
+# P3 — 2-DOF Arm Dynamics
 
 Deriving `M(θ)θ̈ + C(θ,θ̇)θ̇ + G(θ) = τ` for a planar two-link arm with
 point masses at the end of each link.
