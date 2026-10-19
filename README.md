@@ -87,14 +87,23 @@ nothing sets the arm in motion without a nudge.
 simulation (undamped + damped), and the full derivation writeup in
 [`derivation_notes.md`](P3_dynamics/derivation_notes.md)
 
-## P4 — Model-based control *(in progress)*
+P4 — Model-based control (in progress)
 
-Three controllers on the same system, compared honestly: **PID** as the model-free baseline, **LQR** derived from the linearised dynamics, and **computed-torque** using the P3 model directly to cancel the nonlinearities.
+The question: once I can simulate the physics, how do I make it do what I want, and how can I tell whether a controller will work before I run it?
 
-The test case is the unstable equilibrium — holding the arm upright against gravity — where a lazy controller falls over and a good one doesn't.
+Part 1: PID on an inverted pendulum ✅
 
-The goal isn't "I wrote a PID controller." It's being able to say *why* one controller beats another, and where each one breaks.
+Before touching the arm I went back to the single pendulum and tried to hold it upside down, starting 10° off, then again with a constant disturbance torque pushing on it. I added the three terms one at a time so I could see what each one actually does.
 
+P alone never settles. Above a certain gain it stops the pendulum falling, but it swings ±10° forever. P adds a spring, not a brake, so nothing removes the energy. The gain it has to beat is g/L: at the top, gravity behaves like a spring pushing the pendulum away, and the controller has to overpower that before it does anything useful. D is the brake; the oscillation dies within a few seconds. Add a constant disturbance and PD still settles, but 5.67° away from the target.
+
+Where I got it wrong: I predicted that offset as −d/Kp = −3.8°. The simulation gave +5.67°, wrong size and wrong sign. My first instinct was that the small-angle approximation had broken down. It hadn't. I'd left gravity out of the balance, and at the top gravity pushes the same way as the disturbance. With it back in, d/(Kp − g/L) gives 5.676°, within 0.004° of the simulation. I then removes the offset completely, and the integral settles at exactly the value needed to cancel the disturbance (−d/Ki, predicted −0.4, measured −0.398).
+
+Tuning, and why intuition wasn't enough. I scored every gain combination on overshoot, settling time and steady-state error, and searched a grid of 176 combinations. Two things surprised me. The best gains kept landing on the edge of whatever grid I chose. And Ki = 150 turned out to be perfectly stable at high Kp and Kd, even though I'd calculated that the limit was about 200 at lower gains. Working out the characteristic equation and applying the Routh–Hurwitz criterion explained it: the stability limit is Ki < Kd(Kp − g/L), so it moves with the other two gains. I then checked Routh against all 176 simulations. They agreed on 165. Every one of the other 11 had its slowest pole within 0.25 of the imaginary axis, so it was growing or decaying too slowly for a 20-second simulation to decide. Simulation tells you what happened; the analysis tells you what will happen.
+
+What PID couldn't tell me. The winners sit on the grid edge because my cost function never charged for torque: bigger gains always looked better. (1000, 500, 100) scores better than my best result but needs ten times the peak torque, which no real motor would give. Deciding how much error is worth how much effort is exactly what LQR formalises, so it's next on the list once computed torque is done.
+
+📁 P4_control/ — notebook with P → PD → PID, the grid search, Routh vs simulation and a stability map; full writeup in derivation_notes.md
 ## P5 — Learning-based control ⭐ *(planned)*
 
 The hinge of this repo. I take a problem I've already solved with theory and solve it again with reinforcement learning, then put the two side by side:
