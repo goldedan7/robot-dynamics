@@ -87,7 +87,7 @@ nothing sets the arm in motion without a nudge.
 simulation (undamped + damped), and the full derivation writeup in
 [`derivation_notes.md`](P3_dynamics/derivation_notes.md)
 
-P4 — Model-based control (in progress)
+## P4 — Model-based control (in progress)
 
 The question: once I can simulate the physics, how do I make it do what I want, and how can I tell whether a controller will work before I run it?
 
