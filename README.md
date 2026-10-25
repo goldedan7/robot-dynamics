@@ -1,6 +1,6 @@
 # From Pendulums to Physical AI
 
-I'm a Mechanical Engineering graduate (Bristol '25), currently completing military service in South Korea. This repo documents my self-study route toward Physical AI — robots that act in the real world — building from classical dynamics and control up to modern robot learning.
+I'm a Mechanical Engineering graduate (Bristol '24), currently completing military service in South Korea. This repo documents my self-study route toward Physical AI — robots that act in the real world — building from classical dynamics and control up to modern robot learning.
 
 Each project builds on the last. I write up what I learned as I go, partly so I remember it, partly in case someone walking a similar path finds it useful.
 
