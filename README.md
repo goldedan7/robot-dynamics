@@ -126,4 +126,4 @@ I'm building toward work at the intersection of robot dynamics and control, mech
 
 Everything here is done in whatever time military service leaves over, which constrains the pace but has been useful discipline about what actually matters.
 
-**Background:** BEng Mechanical Engineering, University of Bristol ('25) · currently completing national service in South Korea.
+**Background:** BEng Mechanical Engineering, University of Bristol ('24) · currently completing national service in South Korea.
